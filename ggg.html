@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carvauto HQ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        form, .vehicle { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        input, button { margin: 5px; padding: 8px; }
+        .vehicle { background: #f9f9f9; }
+        .offers { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Carvauto HQ</h1>
+
+    <div>
+        <h2>Add Vehicle</h2>
+        <form id="vehicle-form">
+            <label for="vin">VIN:</label>
+            <input type="text" id="vin" required>
+            <br>
+            <label for="mileage">Mileage:</label>
+            <input type="number" id="mileage" required>
+            <br>
+            <label for="make">Make:</label>
+            <input type="text" id="make" required>
+            <br>
+            <label for="model">Model:</label>
+            <input type="text" id="model" required>
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" id="price" required>
+            <br>
+            <button type="submit">Add Vehicle</button>
+        </form>
+    </div>
+
+    <div>
+        <h2>Available Vehicles</h2>
+        <div id="vehicles-list"></div>
+    </div>
+
+    <script>
+        const vehicles = [];
+
+        document.getElementById('vehicle-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const vin = document.getElementById('vin').value;
+            const mileage = document.getElementById('mileage').value;
+            const make = document.getElementById('make').value;
+            const model = document.getElementById('model').value;
+            const price = document.getElementById('price').value;
+
+            const vehicle = {
+                vin,
+                mileage,
+                make,
+                model,
+                price,
+                sold: false,
+                offers: []
+            };
+
+            vehicles.push(vehicle);
+            document.getElementById('vehicle-form').reset();
+            displayVehicles();
+        });
+
+        function displayVehicles() {
+            const vehiclesList = document.getElementById('vehicles-list');
+            vehiclesList.innerHTML = '';
+
+            vehicles.forEach((vehicle, index) => {
+                const vehicleDiv = document.createElement('div');
+                vehicleDiv.classList.add('vehicle');
+                vehicleDiv.innerHTML = `
+                    <strong>${vehicle.make} ${vehicle.model}</strong>
+                    <p>VIN: ${vehicle.vin}</p>
+                    <p>Mileage: ${vehicle.mileage}</p>
+                    <p>Price: $${vehicle.price}</p>
+                    <button onclick="markAsSold(${index})">Mark as Sold</button>
+                    <button onclick="makeOffer(${index})">Make an Offer</button>
+                    <div class="offers">
+                        <h4>Offers:</h4>
+                        <div id="offers-${index}"></div>
+                    </div>
+                `;
+                vehiclesList.appendChild(vehicleDiv);
+            });
+        }
+
+        function markAsSold(index) {
+            vehicles[index].sold = true;
+            displayVehicles();
+        }
+
+        function makeOffer(index) {
+            const offerAmount = prompt('Enter your offer amount:');
+            if (offerAmount) {
+                vehicles[index].offers.push(offerAmount);
+                displayVehicles();
+                alert('Offer submitted!');
+            }
+        }
+    </script>
+</body>
+</html>
